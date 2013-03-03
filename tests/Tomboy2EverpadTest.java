@@ -33,6 +33,7 @@ public class Tomboy2EverpadTest extends TestCase{
 
     }
 
+    // lees tomboy notitie
     public void testLeesTomboyTekst() {
         File file = new File(this.dir + "/abeec28c-1003-4239-9b6f-c4d70ac3b673.note");
         try {
