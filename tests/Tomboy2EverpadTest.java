@@ -51,6 +51,7 @@ public class Tomboy2EverpadTest extends TestCase{
         }
     }
 
+    // testen van inlezen xml
     public void testLeesTomboyXml() {
 //        String tomboyFile = this.dir + "/abeec28c-1003-4239-9b6f-c4d70ac3b673 (kopie).note";
         String tomboyFile = this.dir + "/abeec28c-1003-4239-9b6f-c4d70ac3b673.note";
@@ -119,6 +120,7 @@ public class Tomboy2EverpadTest extends TestCase{
         }
     }
 
+    // testen van de functie
     public void testLeesTomboyNote() {
         Tomboy tomboy = new Tomboy(this.dir);
 
@@ -131,6 +133,7 @@ public class Tomboy2EverpadTest extends TestCase{
     }
 
 
+    // lees een Everpad notitie
     public void testEverpadLees() {
         String dir = "/home/chris/.everpad";
         String db = "everpad.3.db";
