@@ -60,6 +60,7 @@ public class TomboyView {
         btnVerwerkTomboy.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent actionEvent) {
+
             }
         });
 

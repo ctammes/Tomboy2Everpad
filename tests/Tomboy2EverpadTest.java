@@ -146,7 +146,6 @@ public class Tomboy2EverpadTest extends TestCase{
         String text = null;
         try{
             text = new Scanner( new File(tomboyFile) ).useDelimiter("\\A").next();
-            text = text.substring(text.indexOf("<note"));
             text = text.replace("<note-content version=\"0.1\">", "<note-content version=\"0.1\"><![CDATA[");
             text = text.replace("</note-content></text>", "]]></note-content></text>");
         } catch (Exception e) {
@@ -154,13 +153,13 @@ public class Tomboy2EverpadTest extends TestCase{
         }
 
         try {
+
             DocumentBuilderFactory dbFactory = DocumentBuilderFactory.newInstance();
             DocumentBuilder dBuilder = dbFactory.newDocumentBuilder();
 
             Document doc = dBuilder.parse(new InputSource(new StringReader(text)));
 
             doc.getDocumentElement().normalize();
-
             NodeList nList = doc.getElementsByTagName(doc.getDocumentElement().getNodeName());
 
             for (int temp = 0; temp < nList.getLength(); temp++) {
@@ -202,20 +201,21 @@ public class Tomboy2EverpadTest extends TestCase{
      * @return
      */
     private String vertaal(String tekst) {
-        tekst = tekst.replace(" ", "&nbsp;");
+        tekst = tekst.replace(" ", "&nbsp;");   // eigenlijk alleen indien meer dan 1 space
         tekst = tekst.replace("\t", "&nbsp;&nbsp;&nbsp;&nbsp;");
         tekst = tekst.replace("bold>", "b>");
         tekst = tekst.replace("italic>", "i>");
         tekst = tekst.replace("strikethrough>", "del>");
-        tekst = tekst.replace("monospace>", "pre>");
+        tekst = tekst.replace("monospace>", "tt>");
         tekst = tekst.replace("list>", "ul>");
         tekst = tekst.replace("list-item>", "li>");
-        tekst = tekst.replace("\n", "<br>");
+        tekst = tekst.replace("\n", "<br />");
 
         return tekst;
     }
 
 
+    // werkt zo niet
     public void testXml() {
         String xml = null;
 
@@ -294,7 +294,7 @@ public class Tomboy2EverpadTest extends TestCase{
             // XPath to retrieve the <version>/<description> tag
             XPath xpath = XPathFactory.newInstance().newXPath();
 //            XPathExpression expr = xpath.compile("/version/description");
-            XPathExpression expr = xpath.compile("/note/note-content");
+            XPathExpression expr = xpath.compile("/note/@version");
             Node descriptionNode = (Node) expr.evaluate(doc, XPathConstants.NODE);
 
             // Transformer to convert the XML Node to String equivalent

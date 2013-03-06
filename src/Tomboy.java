@@ -2,12 +2,15 @@ import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
+import org.xml.sax.InputSource;
 
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
 import java.io.File;
 import java.io.FilenameFilter;
+import java.io.StringReader;
 import java.util.HashMap;
+import java.util.Scanner;
 import java.util.regex.Pattern;
 
 /**
@@ -32,13 +35,22 @@ public class Tomboy {
     public HashMap<String, String> leesFile(String file) {
         file = this.tomboyDir + "/" + file;
 
+        String text = null;
+        try{
+            text = new Scanner( new File(file) ).useDelimiter("\\A").next();
+            text = text.replace("<note-content version=\"0.1\">", "<note-content version=\"0.1\"><![CDATA[");
+            text = text.replace("</note-content></text>", "]]></note-content></text>");
+        } catch (Exception e) {
+            System.out.println(e.getMessage());
+        }
+
         try {
             DocumentBuilderFactory dbFactory = DocumentBuilderFactory.newInstance();
             DocumentBuilder dBuilder = dbFactory.newDocumentBuilder();
-            Document doc = dBuilder.parse(file);
+
+            Document doc = dBuilder.parse(new InputSource(new StringReader(text)));
 
             doc.getDocumentElement().normalize();
-
             NodeList nList = doc.getElementsByTagName(doc.getDocumentElement().getNodeName());
 
             String[] elems = {"title",
@@ -52,13 +64,19 @@ public class Tomboy {
                             "height",
                             "x",
                             "y"};
+
             HashMap<String, String> tomboyInhoud = new HashMap<String, String>();
             for (int temp = 0; temp < nList.getLength(); temp++) {
                 Node nNode = nList.item(temp);
                 if (nNode.getNodeType() == Node.ELEMENT_NODE) {
                     Element eElement = (Element) nNode;
                     for (String elem: elems) {
-                        tomboyInhoud.put(elem, eElement.getElementsByTagName(elem).item(0).getTextContent());
+                        String tekst = eElement.getElementsByTagName(elem).item(0).getTextContent();
+                        if (elem == "note-content") {
+                            tekst = vertaal(tekst);
+                        }
+
+                        tomboyInhoud.put(elem, tekst);
                     }
                 }
             }
@@ -84,6 +102,26 @@ public class Tomboy {
 
         return files;
 
+    }
+
+    /**
+     * Vertaal Tomboy tags naar standaard HTML
+     * @param tekst
+     * @return
+     */
+    private String vertaal(String tekst) {
+        tekst = tekst.replace(" ", "&nbsp;");   // eigenlijk alleen indien meer dan 1 space
+        tekst = tekst.replace("\"", "&quot;");
+        tekst = tekst.replace("\t", "&nbsp;&nbsp;&nbsp;&nbsp;");
+        tekst = tekst.replace("bold>", "b>");
+        tekst = tekst.replace("italic>", "i>");
+        tekst = tekst.replace("strikethrough>", "del>");
+        tekst = tekst.replace("monospace>", "tt>");
+        tekst = tekst.replace("list>", "ul>");
+        tekst = tekst.replace("list-item>", "li>");
+        tekst = tekst.replace("\n", "<br />");
+
+        return tekst;
     }
 
 
