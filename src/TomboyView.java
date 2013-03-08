@@ -1,19 +1,10 @@
-import org.w3c.dom.Document;
-import org.w3c.dom.Element;
-import org.w3c.dom.Node;
-import org.w3c.dom.NodeList;
-
 import javax.swing.*;
-import javax.xml.parsers.DocumentBuilder;
-import javax.xml.parsers.DocumentBuilderFactory;
+import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.ItemEvent;
 import java.awt.event.ItemListener;
-import java.io.File;
-import java.io.FilenameFilter;
 import java.util.HashMap;
-import java.util.regex.Pattern;
 
 /**
  * Created with IntelliJ IDEA.
@@ -29,12 +20,12 @@ public class TomboyView {
     private JButton btnLeesDir;
     private JComboBox cmbTomboyFiles;
     private JButton btnVerwerkTomboy;
-    private JTextArea txtEverpadTekst;
-    private JTextField txtTitel;
+    private JTextField txtEverpadTitel;
     private JButton btnOpslaan;
     private JTextArea txtTomboyTekst;
     private JTextField txtEverpadDb;
     private JTextField txtEverpadDir;
+    private JEditorPane txtEverpadTekst;
 
     private Tomboy tomboyNote = null;
     private EverpadNotes everpad = null;
@@ -70,6 +61,9 @@ public class TomboyView {
                 String naam = cmbTomboyFiles.getItemAt(cmbTomboyFiles.getSelectedIndex()).toString();
                 HashMap<String, String> inhoud = tomboyNote.leesFile(naam);
                 txtTomboyTekst.setText(inhoud.get("note-content"));
+                txtEverpadTitel.setText(inhoud.get("title"));
+                txtEverpadTekst.setFont(Font.getFont("DejaVu Sans Mono"));
+                txtEverpadTekst.setText(inhoud.get("note-content"));
             }
         });
     }

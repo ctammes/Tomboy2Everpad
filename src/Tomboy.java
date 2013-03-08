@@ -2,13 +2,12 @@ import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
-import org.xml.sax.InputSource;
 
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
+import java.io.ByteArrayInputStream;
 import java.io.File;
 import java.io.FilenameFilter;
-import java.io.StringReader;
 import java.util.HashMap;
 import java.util.Scanner;
 import java.util.regex.Pattern;
@@ -36,19 +35,15 @@ public class Tomboy {
         file = this.tomboyDir + "/" + file;
 
         String text = null;
+        ByteArrayInputStream text1 = null;
         try{
             text = new Scanner( new File(file) ).useDelimiter("\\A").next();
-            text = text.replace("<note-content version=\"0.1\">", "<note-content version=\"0.1\"><![CDATA[");
-            text = text.replace("</note-content></text>", "]]></note-content></text>");
-        } catch (Exception e) {
-            System.out.println(e.getMessage());
-        }
+            // belangrijk!!
+            text1 = new ByteArrayInputStream(text.getBytes("UTF8"));
 
-        try {
             DocumentBuilderFactory dbFactory = DocumentBuilderFactory.newInstance();
             DocumentBuilder dBuilder = dbFactory.newDocumentBuilder();
-
-            Document doc = dBuilder.parse(new InputSource(new StringReader(text)));
+            Document doc = dBuilder.parse(text1);
 
             doc.getDocumentElement().normalize();
             NodeList nList = doc.getElementsByTagName(doc.getDocumentElement().getNodeName());
@@ -82,7 +77,7 @@ public class Tomboy {
             }
             return tomboyInhoud;
         } catch (Exception e) {
-            System.out.println(e.getMessage());
+            System.out.println("Exception - " + file + ": " + e.getMessage());
             return null;
         }
     }
@@ -110,7 +105,7 @@ public class Tomboy {
      * @return
      */
     private String vertaal(String tekst) {
-        tekst = tekst.replace(" ", "&nbsp;");   // eigenlijk alleen indien meer dan 1 space
+        tekst = tekst.replaceAll(" (?= )|(?<= ) ","&nbsp;");    // vervang aaneengesloten spaties
         tekst = tekst.replace("\"", "&quot;");
         tekst = tekst.replace("\t", "&nbsp;&nbsp;&nbsp;&nbsp;");
         tekst = tekst.replace("bold>", "b>");

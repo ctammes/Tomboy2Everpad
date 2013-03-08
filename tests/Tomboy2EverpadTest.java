@@ -1,4 +1,3 @@
-import com.sun.xml.internal.fastinfoset.stax.util.StAXParserWrapper;
 import junit.framework.TestCase;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
@@ -6,8 +5,8 @@ import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
 import org.xml.sax.InputSource;
 
-import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.parsers.DocumentBuilder;
+import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.transform.OutputKeys;
 import javax.xml.transform.Transformer;
 import javax.xml.transform.TransformerFactory;
@@ -19,13 +18,13 @@ import javax.xml.xpath.XPathExpression;
 import javax.xml.xpath.XPathFactory;
 import java.io.*;
 import java.sql.ResultSet;
-import java.sql.Timestamp;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.Scanner;
 import java.util.Set;
+import java.util.regex.Pattern;
 
 /**
  * Created with IntelliJ IDEA.
@@ -144,20 +143,20 @@ public class Tomboy2EverpadTest extends TestCase{
         String tomboyFile = this.dir + "/abeec28c-1003-4239-9b6f-c4d70ac3b673.note";
 
         String text = null;
+        ByteArrayInputStream text1 = null;
         try{
-            text = new Scanner( new File(tomboyFile) ).useDelimiter("\\A").next();
-            text = text.replace("<note-content version=\"0.1\">", "<note-content version=\"0.1\"><![CDATA[");
-            text = text.replace("</note-content></text>", "]]></note-content></text>");
+            text = new Scanner( new File(tomboyFile)).useDelimiter("\\A").next();
+            text1 = new ByteArrayInputStream(text.getBytes("UTF8"));
+
         } catch (Exception e) {
-            System.out.println(e.getMessage());
+            System.out.println("1: "+ e.getMessage());
         }
 
         try {
 
             DocumentBuilderFactory dbFactory = DocumentBuilderFactory.newInstance();
             DocumentBuilder dBuilder = dbFactory.newDocumentBuilder();
-
-            Document doc = dBuilder.parse(new InputSource(new StringReader(text)));
+            Document doc = dBuilder.parse(text1);
 
             doc.getDocumentElement().normalize();
             NodeList nList = doc.getElementsByTagName(doc.getDocumentElement().getNodeName());
@@ -190,7 +189,8 @@ public class Tomboy2EverpadTest extends TestCase{
                 }
             }
         } catch (Exception e) {
-            System.out.println(e.getMessage());
+            e.printStackTrace();
+            System.out.println("2: " + e.getMessage() );
         }
     }
 
@@ -201,7 +201,9 @@ public class Tomboy2EverpadTest extends TestCase{
      * @return
      */
     private String vertaal(String tekst) {
-        tekst = tekst.replace(" ", "&nbsp;");   // eigenlijk alleen indien meer dan 1 space
+        Pattern pat = Pattern.compile(" (?= )|(?<= ) ");
+        tekst = tekst.replaceAll(" (?= )|(?<= ) ","&nbsp;");
+//        tekst = tekst.replace("\b{2,}", "&nbsp;");   // eigenlijk alleen indien meer dan 1 space
         tekst = tekst.replace("\t", "&nbsp;&nbsp;&nbsp;&nbsp;");
         tekst = tekst.replace("bold>", "b>");
         tekst = tekst.replace("italic>", "i>");
