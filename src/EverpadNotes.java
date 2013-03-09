@@ -141,17 +141,16 @@ public class EverpadNotes {
         return sqlite.execute(sql);
     }
 
-    public boolean schrijfNote(String titel, String tekst) {
+    public boolean schrijfNote(Tomboy note) {
         this.guid = null;
 
+        String values = String.format("null, '%s', '%s', %d, %d, null, 1, 0, 0, 0, null",
+                        note.getTitle(), note.getNote_content(), datumNaarEverpaddatum(note.getCreate_date(), "yyyy-MM-dd HH:mm:ss"));
         String sql = "insert into notes" +
                     " (guid, title, content, created, updated, " +
                     " updated_local, notebook_id, pinnded, " +
                     " place_id, action, conflict_parent_id)" +
-                    " values (" +
-                    " null, '" + titel + "', '" + tekst + ", " +
-                    "  ";
-
+                    " values (" + values + ")";
 
         return false;
 

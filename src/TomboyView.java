@@ -4,7 +4,6 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.ItemEvent;
 import java.awt.event.ItemListener;
-import java.util.HashMap;
 
 /**
  * Created with IntelliJ IDEA.
@@ -58,12 +57,22 @@ public class TomboyView {
         cmbTomboyFiles.addItemListener(new ItemListener() {
             @Override
             public void itemStateChanged(ItemEvent itemEvent) {
-                String naam = cmbTomboyFiles.getItemAt(cmbTomboyFiles.getSelectedIndex()).toString();
-                HashMap<String, String> inhoud = tomboyNote.leesFile(naam);
-                txtTomboyTekst.setText(inhoud.get("note-content"));
-                txtEverpadTitel.setText(inhoud.get("title"));
-                txtEverpadTekst.setFont(Font.getFont("DejaVu Sans Mono"));
-                txtEverpadTekst.setText(inhoud.get("note-content"));
+                try {
+                    String naam = cmbTomboyFiles.getItemAt(cmbTomboyFiles.getSelectedIndex()).toString();
+                    tomboyNote.leesFile(naam);
+                    txtTomboyTekst.setText(tomboyNote.getNote_content());
+                    txtEverpadTitel.setText(tomboyNote.getTitle());
+                    txtEverpadTekst.setFont(Font.getFont("DejaVu Sans Mono"));
+                    txtEverpadTekst.setText(tomboyNote.getNote_content());
+                } catch (Exception e) {
+                    LoggingExceptions.logException(e);
+                }
+            }
+        });
+        btnOpslaan.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent actionEvent) {
+                everpad.schrijfNote(tomboyNote);
             }
         });
     }

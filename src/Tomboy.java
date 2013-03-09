@@ -8,7 +8,6 @@ import javax.xml.parsers.DocumentBuilderFactory;
 import java.io.ByteArrayInputStream;
 import java.io.File;
 import java.io.FilenameFilter;
-import java.util.HashMap;
 import java.util.Scanner;
 import java.util.regex.Pattern;
 
@@ -19,6 +18,7 @@ import java.util.regex.Pattern;
  * Time: 20:28
  * To change this template use File | Settings | File Templates.
  */
+
 public class Tomboy {
     private String tomboyDir = null;
 
@@ -26,27 +26,92 @@ public class Tomboy {
         this.tomboyDir = dir;
     }
 
+    private String filenaam = null;     // misschien gebruiken voor guid bij Everpad?
+    private String title = null;
+    private String note_content = null;
+    private String create_date = null;
+    private String last_change_date = null;
+    private String last_metadata_change_date = null;
+    private int cursor_position = 0;
+    private int selection_bound_position = 0;
+    private int width = 0;
+    private int height = 0;
+    private int x = 0;
+    private int y = 0;
+
+    public String getFilenaam() {
+        return filenaam;
+    }
+
+    public String getTitle() {
+        return title;
+    }
+
+    public String getNote_content() {
+        return note_content;
+    }
+
+    public String getCreate_date() {
+        return create_date;
+    }
+
+    public String getLast_change_date() {
+        return last_change_date;
+    }
+
+    public String getLast_metadata_change_date() {
+        return last_metadata_change_date;
+    }
+
+    public int getCursor_position() {
+        return cursor_position;
+    }
+
+    public int getSelection_bound_position() {
+        return selection_bound_position;
+    }
+
+    public int getWidth() {
+        return width;
+    }
+
+    public int getHeight() {
+        return height;
+    }
+
+    public int getX() {
+        return x;
+    }
+
+    public int getY() {
+        return y;
+    }
+
     /**
      * Geef de inhoud van een Tomboy notitie terug
      * @param file
      * @return
      */
-    public HashMap<String, String> leesFile(String file) {
+    public void leesFile(String file) {
         file = this.tomboyDir + "/" + file;
 
         String text = null;
         ByteArrayInputStream text1 = null;
         try{
             text = new Scanner( new File(file) ).useDelimiter("\\A").next();
+            // hiermee bewaar je de html tags in de tekst
+            text = text.replaceFirst("(<note-content version=\".+\">)", "$1<![CDATA[");
+            text = text.replace("</note-content></text>", "]]></note-content></text>");
+
             // belangrijk!!
             text1 = new ByteArrayInputStream(text.getBytes("UTF8"));
-
             DocumentBuilderFactory dbFactory = DocumentBuilderFactory.newInstance();
             DocumentBuilder dBuilder = dbFactory.newDocumentBuilder();
             Document doc = dBuilder.parse(text1);
 
             doc.getDocumentElement().normalize();
             NodeList nList = doc.getElementsByTagName(doc.getDocumentElement().getNodeName());
+
 
             String[] elems = {"title",
                             "note-content",
@@ -60,25 +125,43 @@ public class Tomboy {
                             "x",
                             "y"};
 
-            HashMap<String, String> tomboyInhoud = new HashMap<String, String>();
+            filenaam = file;
             for (int temp = 0; temp < nList.getLength(); temp++) {
                 Node nNode = nList.item(temp);
                 if (nNode.getNodeType() == Node.ELEMENT_NODE) {
                     Element eElement = (Element) nNode;
                     for (String elem: elems) {
                         String tekst = eElement.getElementsByTagName(elem).item(0).getTextContent();
-                        if (elem == "note-content") {
+                        if (elem == "title") {
+                            title = tekst;
+                        } else if (elem == "note-content") {
                             tekst = vertaal(tekst);
+                            System.out.println(file + ": " + tekst);
+                            note_content = tekst;
+                        } else if (elem == "create-date") {
+                            create_date = tekst;
+                        } else if (elem == "last-change-date") {
+                            last_change_date = tekst;
+                        } else if (elem == "last-metadata-change-date") {
+                            last_metadata_change_date = tekst;
+                        } else if (elem == "cursor-position") {
+                            cursor_position = Integer.parseInt(tekst);
+                        } else if (elem == "selection-bound-position") {
+                            selection_bound_position = Integer.parseInt(tekst);
+                        } else if (elem == "width") {
+                            width = Integer.parseInt(tekst);
+                        } else if (elem == "height") {
+                            height= Integer.parseInt(tekst);
+                        } else if (elem == "x") {
+                            x =Integer.parseInt(tekst);
+                        } else if (elem == "y") {
+                            y = Integer.parseInt(tekst);
                         }
-
-                        tomboyInhoud.put(elem, tekst);
                     }
                 }
             }
-            return tomboyInhoud;
         } catch (Exception e) {
             System.out.println("Exception - " + file + ": " + e.getMessage());
-            return null;
         }
     }
 
@@ -122,3 +205,4 @@ public class Tomboy {
 
 
 }
+

@@ -21,9 +21,7 @@ import java.sql.ResultSet;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
-import java.util.HashMap;
 import java.util.Scanner;
-import java.util.Set;
 import java.util.regex.Pattern;
 
 /**
@@ -146,6 +144,8 @@ public class Tomboy2EverpadTest extends TestCase{
         ByteArrayInputStream text1 = null;
         try{
             text = new Scanner( new File(tomboyFile)).useDelimiter("\\A").next();
+            text = text.replace("<note-content version=\"0.1\">", "<note-content version=\"0.1\"><![CDATA[");
+            text = text.replace("</note-content></text>", "]]></note-content></text>");
             text1 = new ByteArrayInputStream(text.getBytes("UTF8"));
 
         } catch (Exception e) {
@@ -317,11 +317,8 @@ public class Tomboy2EverpadTest extends TestCase{
         Tomboy tomboy = new Tomboy(this.dir);
 
         String tomboyFile = "/dab786f7-6c22-4249-9c8e-4fd72f3bf42f.note";
-        HashMap<String, String> tomboyNote = tomboy.leesFile(tomboyFile);
-        Set<String> keys = tomboyNote.keySet();
-        for (String key: keys) {
-            System.out.format("%s : %s\n", key, tomboyNote.get(key));
-        }
+        tomboy.leesFile(tomboyFile);
+        //TODO uitwerken verder
     }
 
 
