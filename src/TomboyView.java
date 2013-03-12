@@ -4,6 +4,7 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.ItemEvent;
 import java.awt.event.ItemListener;
+import java.io.File;
 
 /**
  * Created with IntelliJ IDEA.
@@ -25,6 +26,8 @@ public class TomboyView {
     private JTextField txtEverpadDb;
     private JTextField txtEverpadDir;
     private JEditorPane txtEverpadTekst;
+    private JButton btnOpenDb;
+    private JButton btnFileChooser;
 
     private Tomboy tomboyNote = null;
     private EverpadNotes everpad = null;
@@ -33,7 +36,9 @@ public class TomboyView {
         txtTomboyDir.setText("/home/chris/.local/share/tomboy");
         tomboyNote = new Tomboy(txtTomboyDir.getText());
 
-        txtEverpadDir.setText("/home/chris/.everpad");
+        //TODO aantal voorafgaande keuzes opslaan
+        txtEverpadDir.setText("/home/chris/.everpad");  // dit is de echte
+        txtEverpadDir.setText("/home/chris/IdeaProjects/java/Tomboy2Everpad");
         txtEverpadDb.setText("everpad.3.db");
 
         btnLeesDir.addActionListener(new ActionListener() {
@@ -73,6 +78,29 @@ public class TomboyView {
             @Override
             public void actionPerformed(ActionEvent actionEvent) {
                 everpad.schrijfNote(tomboyNote);
+            }
+        });
+        btnOpenDb.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent actionEvent) {
+                if (everpad == null) {
+                    everpad = new EverpadNotes(txtEverpadDir.getText(), txtEverpadDb.getText());
+                    btnOpenDb.setText("SluitDb");
+                } else {
+                    everpad.sluitDb();
+                    btnOpenDb.setText("OpenDb");
+                    everpad = null;
+                }
+            }
+        });
+        btnFileChooser.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent actionEvent) {
+                JFileChooser fc = new JFileChooser();
+                fc.setCurrentDirectory(new File("/home/chris"));
+                fc.setDialogTitle("Selecteer directory");
+                fc.setVisible(true);
+
             }
         });
     }

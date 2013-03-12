@@ -327,7 +327,7 @@ public class Tomboy2EverpadTest extends TestCase{
         String dir = "/home/chris/.everpad";
         String db = "everpad.3.db";
         EverpadNotes notes = new EverpadNotes(dir, db);
-        if (notes.openDb()) {
+        if (notes != null) {
             try{
                 ResultSet rs = notes.leesNote(38L);
                 while (rs.next()) {

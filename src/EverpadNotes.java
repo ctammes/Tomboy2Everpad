@@ -23,7 +23,7 @@ public class EverpadNotes {
     private String pinnded;
     private int place_id;
     private int action;
-    private int conflic_parent_id;
+    private int conflict_parent_id;
 
     public Long getId() {
         return id;
@@ -113,22 +113,19 @@ public class EverpadNotes {
         this.action = action;
     }
 
-    public int getConflic_parent_id() {
-        return conflic_parent_id;
+    public int getConflict_parent_id() {
+        return conflict_parent_id;
     }
 
-    public void setConflic_parent_id(int conflic_parent_id) {
-        this.conflic_parent_id = conflic_parent_id;
+    public void setConflict_parent_id(int conflict_parent_id) {
+        this.conflict_parent_id = conflict_parent_id;
     }
 
     private Sqlite sqlite = null;
 
     public EverpadNotes(String dir, String db) {
         this.sqlite = new Sqlite(dir, db);
-    }
-
-    public boolean openDb() {
-        return sqlite.openDb();
+        sqlite.openDb();
     }
 
     public void sluitDb() {
@@ -145,13 +142,13 @@ public class EverpadNotes {
         this.guid = null;
 
         String values = String.format("null, '%s', '%s', %d, %d, null, 1, 0, 0, 0, null",
-                        note.getTitle(), note.getNote_content(), datumNaarEverpaddatum(note.getCreate_date(), "yyyy-MM-dd HH:mm:ss"));
+                        note.getTitle(), note.getNote_content(), datumNaarEverpaddatum(note.getCreate_date(), "yyyy-MM-dd HH:mm:ss"), datumNaarEverpaddatum(note.getLast_change_date(), "yyyy-MM-dd HH:mm:ss"));
         String sql = "insert into notes" +
                     " (guid, title, content, created, updated, " +
                     " updated_local, notebook_id, pinnded, " +
                     " place_id, action, conflict_parent_id)" +
                     " values (" + values + ")";
-
+        sqlite.insert(sql);
         return false;
 
     }
