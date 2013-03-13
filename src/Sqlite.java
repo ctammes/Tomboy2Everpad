@@ -38,9 +38,11 @@ public class Sqlite {
             // if the error message is "out of memory", 
             // it probably means no database file is found
             System.err.println(e.getMessage());
+            Tomboy2Everpad.log.severe(Thread.currentThread().getStackTrace()[1].getMethodName() + ": "+e.getMessage());
             return false;
         } catch(ClassNotFoundException e) {
             System.err.println(Thread.currentThread().getStackTrace()[1].getMethodName() + " ClassNotFound: "+e.getMessage());
+            Tomboy2Everpad.log.severe(Thread.currentThread().getStackTrace()[1].getMethodName() + " ClassNotFound: "+e.getMessage());
             return false;
         }
     }
@@ -53,7 +55,7 @@ public class Sqlite {
         } catch(SQLException e) {
             // if the error message is "out of memory", 
             // it probably means no database file is found
-            System.err.println(Thread.currentThread().getStackTrace()[1].getMethodName() + e.getMessage());
+            Tomboy2Everpad.log.severe(Thread.currentThread().getStackTrace()[1].getMethodName() + ": "+e.getMessage());
         }
     }
     
@@ -67,7 +69,7 @@ public class Sqlite {
         } catch(SQLException e) {
             // if the error message is "out of memory", 
             // it probably means no database file is found
-            System.err.println(Thread.currentThread().getStackTrace()[1].getMethodName() + e.getMessage());
+            Tomboy2Everpad.log.severe(Thread.currentThread().getStackTrace()[1].getMethodName() + ": "+e.getMessage());
             return null;
         }
         
@@ -82,7 +84,7 @@ public class Sqlite {
         } catch(SQLException e) {
             // if the error message is "out of memory", 
             // it probably means no database file is found
-            System.err.println(Thread.currentThread().getStackTrace()[1].getMethodName() + e.getMessage());
+            Tomboy2Everpad.log.severe(Thread.currentThread().getStackTrace()[1].getMethodName() + ": "+e.getMessage());
             return false;
         }
         

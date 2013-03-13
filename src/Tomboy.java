@@ -136,7 +136,6 @@ public class Tomboy {
                             title = tekst;
                         } else if (elem == "note-content") {
                             tekst = vertaal(tekst);
-                            System.out.println(file + ": " + tekst);
                             note_content = tekst;
                         } else if (elem == "create-date") {
                             create_date = tekst;
@@ -161,7 +160,7 @@ public class Tomboy {
                 }
             }
         } catch (Exception e) {
-            System.out.println("Exception - " + file + ": " + e.getMessage());
+            Tomboy2Everpad.log.severe(Thread.currentThread().getStackTrace()[1].getMethodName() + " file: " + file + ": "+e.getMessage());
         }
     }
 

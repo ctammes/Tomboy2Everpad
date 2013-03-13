@@ -39,7 +39,7 @@ public class TomboyView {
         //TODO aantal voorafgaande keuzes opslaan
         txtEverpadDir.setText("/home/chris/.everpad");  // dit is de echte
         txtEverpadDir.setText("/home/chris/IdeaProjects/java/Tomboy2Everpad");
-        txtEverpadDb.setText("everpad.3.db");
+        txtEverpadDb.setText("everpad.5.db");   // everpad.3.db is de oude versie, zonder share-kolommen
 
         btnLeesDir.addActionListener(new ActionListener() {
             @Override
@@ -70,16 +70,26 @@ public class TomboyView {
                     txtEverpadTekst.setFont(Font.getFont("DejaVu Sans Mono"));
                     txtEverpadTekst.setText(tomboyNote.getNote_content());
                 } catch (Exception e) {
-                    LoggingExceptions.logException(e);
+                    Tomboy2Everpad.log.severe(e.getMessage());
                 }
             }
         });
         btnOpslaan.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent actionEvent) {
-                everpad.schrijfNote(tomboyNote);
+                if (everpad != null) {
+                    if (everpad.zoekTitel(tomboyNote.getTitle()) == 0) {
+                        everpad.schrijfNote(tomboyNote);
+                    } else {
+                        JOptionPane.showMessageDialog(null, "Record met deze titel bestaat al!", "Info", JOptionPane.INFORMATION_MESSAGE);
+                    }
+                } else {
+                    JOptionPane.showMessageDialog(null, "Database niet geopend!", "Fout", JOptionPane.ERROR_MESSAGE);
+                }
+
             }
         });
+
         btnOpenDb.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent actionEvent) {
@@ -93,14 +103,25 @@ public class TomboyView {
                 }
             }
         });
+
         btnFileChooser.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent actionEvent) {
                 JFileChooser fc = new JFileChooser();
-                fc.setCurrentDirectory(new File("/home/chris"));
-                fc.setDialogTitle("Selecteer directory");
-                fc.setVisible(true);
-
+                fc.setCurrentDirectory(new File(txtEverpadDir.getText()));
+                fc.setDialogTitle("Selecteer Everpad database directory");
+                fc.setDialogType(JFileChooser.OPEN_DIALOG);
+                fc.setFileSelectionMode(JFileChooser.DIRECTORIES_ONLY);
+                if (fc.showOpenDialog(null) == JFileChooser.APPROVE_OPTION) {
+                    if (fc.getFileSelectionMode() == JFileChooser.DIRECTORIES_ONLY) {
+                        txtEverpadDir.setText(fc.getSelectedFile().toString());     // bij DIRECTORIES_ONLY
+                    } else {
+                        txtEverpadDir.setText(fc.getCurrentDirectory().toString()); // zonder DIRECTORIES_ONLY
+                    }
+                }
+                else {
+                    Tomboy2Everpad.log.info("No Selection ");
+                }
             }
         });
     }

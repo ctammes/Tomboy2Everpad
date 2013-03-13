@@ -22,6 +22,8 @@ import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.Scanner;
+import java.util.logging.FileHandler;
+import java.util.logging.Logger;
 import java.util.regex.Pattern;
 
 /**
@@ -34,9 +36,23 @@ import java.util.regex.Pattern;
 public class Tomboy2EverpadTest extends TestCase{
 
     private String dir = null;
+    private String everpadDir = null;
+    private String everpadDb = null;
+    private Logger log = null;
 
     public void setUp() throws Exception {
-        this.dir = "/home/chris/.local/share/tomboy";
+        dir = "/home/chris/.local/share/tomboy";
+        everpadDir = "/home/chris/IdeaProjects/java/Tomboy2Everpad";
+        everpadDb = "everpad.5.db";
+
+        try {
+            FileHandler hand = new FileHandler("test.log");
+            log = Logger.getLogger("log_file");
+            log.addHandler(hand);
+        } catch (Exception e) {
+            System.out.println("logger: " + e.getMessage());
+        }
+
 
     }
 
@@ -354,6 +370,9 @@ public class Tomboy2EverpadTest extends TestCase{
 
         try{
             SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+            String vandaag = dateFormat.format(new Date());
+            System.out.println("vandaag: "+vandaag);
+
             String tomboyDatum = "2013-02-24T14:26:27.4496230+01:00";
             System.out.println("tomboy datum1: " + tomboyDatum);
             tomboyDatum = tomboyDatum.substring(0,19).replace("T"," ");
@@ -394,5 +413,24 @@ public class Tomboy2EverpadTest extends TestCase{
         for (String file: files) {
             System.out.format("File: %s\n", file);
         }
+    }
+
+    public void testZoekTitel() {
+        EverpadNotes notes = new EverpadNotes(everpadDir, everpadDb);
+        System.out.println(notes.zoekTitel("TesSie"));
+
+        System.out.println(notes.zoekTitel("flauwekul"));
+    }
+
+    public void testReplace() {
+        String tekst = "dit is 'een' test";
+        System.out.println(tekst);
+        log.info(tekst);
+        tekst = tekst.replace("'", "''");
+        System.out.println(tekst);
+        log.info(tekst);
+        tekst = tekst.replaceAll("'", "''");
+        System.out.println(tekst);
+        log.info(tekst);
     }
 }

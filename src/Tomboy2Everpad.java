@@ -1,4 +1,6 @@
 import javax.swing.*;
+import java.util.logging.FileHandler;
+import java.util.logging.Logger;
 
 /**
  * Created with IntelliJ IDEA.
@@ -9,7 +11,17 @@ import javax.swing.*;
  */
 public class Tomboy2Everpad {
 
+    public static Logger log = null;
+
     public static void main(String[] args) {
+        try {
+            FileHandler hand = new FileHandler("Tomboy2Everpad.log");
+            log = Logger.getLogger("log_file");
+            log.addHandler(hand);
+        } catch (Exception e) {
+            System.out.println("logger: " + e.getMessage());
+        }
+
         JFrame frame = new JFrame("TomboyView");
         frame.setContentPane(new TomboyView().mainPanel);
         frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);

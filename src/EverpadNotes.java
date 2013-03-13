@@ -24,6 +24,10 @@ public class EverpadNotes {
     private int place_id;
     private int action;
     private int conflict_parent_id;
+    // deze voor Everpad versie 5
+    private int share_date;
+    private int share_status;
+    private String share_url;
 
     public Long getId() {
         return id;
@@ -121,6 +125,30 @@ public class EverpadNotes {
         this.conflict_parent_id = conflict_parent_id;
     }
 
+    public int getShare_date() {
+        return share_date;
+    }
+
+    public void setShare_date(int share_date) {
+        this.share_date = share_date;
+    }
+
+    public int getShare_status() {
+        return share_status;
+    }
+
+    public void setShare_status(int share_status) {
+        this.share_status = share_status;
+    }
+
+    public String getShare_url() {
+        return share_url;
+    }
+
+    public void setShare_url(String share_url) {
+        this.share_url = share_url;
+    }
+
     private Sqlite sqlite = null;
 
     public EverpadNotes(String dir, String db) {
@@ -141,13 +169,22 @@ public class EverpadNotes {
     public boolean schrijfNote(Tomboy note) {
         this.guid = null;
 
-        String values = String.format("null, '%s', '%s', %d, %d, null, 1, 0, 0, 0, null",
-                        note.getTitle(), note.getNote_content(), datumNaarEverpaddatum(note.getCreate_date(), "yyyy-MM-dd HH:mm:ss"), datumNaarEverpaddatum(note.getLast_change_date(), "yyyy-MM-dd HH:mm:ss"));
+        SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+        String nu = dateFormat.format(new Date());
+
+        String titel = note.getTitle().replaceAll("'", "''");;
+        String tekst = note.getNote_content().replaceAll("'", "''");;
+        String values = String.format("null, '%s', '%s', %d, %d, %d, 1, 0, null, 1, null, null, 0, null",
+                        titel, tekst, datumNaarEverpaddatum(note.getCreate_date(), "yyyy-MM-dd HH:mm:ss"),
+                        datumNaarEverpaddatum(note.getLast_change_date(), "yyyy-MM-dd HH:mm:ss"),
+                        datumNaarEverpaddatum(nu, "yyyy-MM-dd HH:mm:ss"));
         String sql = "insert into notes" +
                     " (guid, title, content, created, updated, " +
                     " updated_local, notebook_id, pinnded, " +
-                    " place_id, action, conflict_parent_id)" +
+                    " place_id, action, conflict_parent_id, " +
+                    " share_date, share_status, share_url)" +
                     " values (" + values + ")";
+        Tomboy2Everpad.log.info("sql: " + sql);
         sqlite.insert(sql);
         return false;
 
@@ -184,6 +221,23 @@ public class EverpadNotes {
         Date time=new Date(timestamp);
         return dateFormat.format(time);
 
+    }
+
+    /**
+     * Zoekt record met titel
+     * @param titel
+     * @return id
+     */
+    public Long zoekTitel(String titel) {
+        String sql = String.format("select id from notes where lower(title) = '%s'",
+                titel.toLowerCase());
+        try {
+            ResultSet rs = sqlite.execute(sql);
+            return rs.getLong("id");
+        } catch (Exception e) {
+            System.out.println(Thread.currentThread().getStackTrace()[1].getMethodName() + e.getMessage());
+            return 0L;
+        }
     }
     
 }
