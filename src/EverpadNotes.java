@@ -177,16 +177,16 @@ public class EverpadNotes {
         String titel = note.getTitle().replaceAll("'", "''");;
         String tekst = note.getNote_content().replaceAll("'", "''");;
         String values = String.format("null, '%s', '%s', %d, %d, %d, 1, 0, null, 1, null, null, 0, null",
-                        titel, tekst, datumNaarEverpaddatum(note.getCreate_date(), "yyyy-MM-dd HH:mm:ss"),
-                        datumNaarEverpaddatum(note.getLast_change_date(), "yyyy-MM-dd HH:mm:ss"),
-                        datumNaarEverpaddatum(nu, "yyyy-MM-dd HH:mm:ss"));
+                        titel, tekst, datumNaarEverpaddatum(note.getCreate_date()),
+                        datumNaarEverpaddatum(note.getLast_change_date()),
+                        datumNaarEverpaddatum(nu));
         String sql = "insert into notes" +
                     " (guid, title, content, created, updated, " +
                     " updated_local, notebook_id, pinnded, " +
                     " place_id, action, conflict_parent_id, " +
                     " share_date, share_status, share_url)" +
                     " values (" + values + ")";
-        Tomboy2Everpad.log.info("sql: " + sql);
+        Tomboy2Everpad.log.fine("sql: " + sql);
         sqlite.executeNoResult(sql);
         return false;
 
@@ -212,7 +212,25 @@ public class EverpadNotes {
         }
     }
 
+    /**
+     * Converteer een datum naar Everpad formaat (Java timestamp??)
+     * Default datumformaat: "yyyy-MM-dd HH:mm:ss"
+     * @param datum
+     * @return
+     */
+    public long datumNaarEverpaddatum(String datum) {
 
+        try{
+            SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+            datum = datum.substring(0,19).replace("T"," ");
+            Date parsedDate = dateFormat.parse(datum);
+            long timestamp = parsedDate.getTime();
+            return timestamp;
+        } catch (ParseException e) {
+            Tomboy2Everpad.log.severe(e.getMessage());
+            return 0;
+        }
+    }
 
     /**
      * Zet Everpad datum om in 'normale' datum
@@ -235,7 +253,7 @@ public class EverpadNotes {
     public Long zoekTitel(String titel) {
         String sql = String.format("select id from notes where lower(title) = '%s'",
             titel.toLowerCase());
-        Tomboy2Everpad.log.info("sql: " + sql);
+        Tomboy2Everpad.log.fine("sql: " + sql);
         try {
             ResultSet rs = sqlite.execute(sql);
             if (rs.next()) {
