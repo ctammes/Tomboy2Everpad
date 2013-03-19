@@ -1,4 +1,7 @@
-import junit.framework.TestCase;
+import junit.framework.Assert;
+import nl.ctammes.common.MijnLog;
+import org.junit.BeforeClass;
+import org.junit.Test;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.w3c.dom.Node;
@@ -22,7 +25,7 @@ import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.Scanner;
-import java.util.logging.FileHandler;
+import java.util.logging.Level;
 import java.util.logging.Logger;
 import java.util.regex.Pattern;
 
@@ -33,30 +36,36 @@ import java.util.regex.Pattern;
  * Time: 20:44
  * To change this template use File | Settings | File Templates.
  */
-public class Tomboy2EverpadTest extends TestCase{
+public class Tomboy2EverpadTest {
 
-    private String dir = null;
-    private String everpadDir = null;
-    private String everpadDb = null;
-    private Logger log = null;
+    private static String dir = null;
+    private static String everpadDir = null;
+    private static String everpadDb = null;
 
-    public void setUp() throws Exception {
+    static String logDir = "./tests";
+    static String logNaam = "test.log";
+    static Logger log = null;
+
+    @BeforeClass
+    public static void setUp() throws Exception {
         dir = "/home/chris/.local/share/tomboy";
         everpadDir = "/home/chris/IdeaProjects/java/Tomboy2Everpad";
         everpadDb = "everpad.5.db";
 
-        try {
-            FileHandler hand = new FileHandler("test.log");
-            log = Logger.getLogger("log_file");
-            log.addHandler(hand);
-        } catch (Exception e) {
-            System.out.println("logger: " + e.getMessage());
+        if (log == null) {
+            try {
+                MijnLog mijnlog = new MijnLog(logDir, logNaam, true);
+                log = mijnlog.getLog();
+                log.setLevel(Level.INFO);
+            } catch (Exception e) {
+                System.out.println(e.getMessage());
+            }
         }
-
 
     }
 
     // lees tomboy notitie
+    @Test
     public void testLeesTomboyTekst() {
         File file = new File(this.dir + "/abeec28c-1003-4239-9b6f-c4d70ac3b673.note");
         try {
@@ -76,6 +85,7 @@ public class Tomboy2EverpadTest extends TestCase{
     }
 
     // testen van inlezen xml
+    @Test
     public void testLeesTomboyXml() {
 //        String tomboyFile = this.dir + "/abeec28c-1003-4239-9b6f-c4d70ac3b673 (kopie).note";
         String tomboyFile = this.dir + "/abeec28c-1003-4239-9b6f-c4d70ac3b673.note";
@@ -153,6 +163,7 @@ public class Tomboy2EverpadTest extends TestCase{
     /**
      * Dit zou de definitieve functie moeten zijn
      */
+    @Test
     public void testXmlFunctie() {
         String tomboyFile = this.dir + "/abeec28c-1003-4239-9b6f-c4d70ac3b673.note";
 
@@ -234,6 +245,7 @@ public class Tomboy2EverpadTest extends TestCase{
 
 
     // werkt zo niet
+    @Test
     public void testXml() {
         String xml = null;
 
@@ -329,6 +341,7 @@ public class Tomboy2EverpadTest extends TestCase{
     }
 
     // testen van de functie
+    @Test
     public void testLeesTomboyNote() {
         Tomboy tomboy = new Tomboy(this.dir);
 
@@ -339,13 +352,14 @@ public class Tomboy2EverpadTest extends TestCase{
 
 
     // lees een Everpad notitie
+    @Test
     public void testEverpadLees() {
         String dir = "/home/chris/.everpad";
-        String db = "everpad.3.db";
+        String db = "everpad.5.db";
         EverpadNotes notes = new EverpadNotes(dir, db);
         if (notes != null) {
             try{
-                ResultSet rs = notes.leesNote(38L);
+                ResultSet rs = notes.leesNote(23L);
                 while (rs.next()) {
                     System.out.println(rs.getString("title"));
                 }
@@ -358,6 +372,7 @@ public class Tomboy2EverpadTest extends TestCase{
     }
 
     // voorbeeld berekeningen
+    @Test
     public void testTomboyDatum() {
         Date nu = new Date();
         System.out.println("nu: "+nu.toString());
@@ -392,6 +407,7 @@ public class Tomboy2EverpadTest extends TestCase{
     }
 
     // 'serieuze' test via EverpadNotes class
+    @Test
     public void testEverpadDatum() {
 
         EverpadNotes notes = new EverpadNotes("", "");
@@ -406,22 +422,28 @@ public class Tomboy2EverpadTest extends TestCase{
 
     }
 
+    @Test
     public void testLeesTomboyFilenamen() {
         Tomboy tomboy = new Tomboy(this.dir);
         String[] files = tomboy.leesAlleFilenamen();
         System.out.println(files.length + " files gevonden:");
+        Assert.assertTrue("aantal files", files.length == 145);
         for (String file: files) {
             System.out.format("File: %s\n", file);
         }
     }
 
+    @Test
     public void testZoekTitel() {
         EverpadNotes notes = new EverpadNotes(everpadDir, everpadDb);
+        Assert.assertTrue("TesSie", notes.zoekTitel("TesSie") == 4);
         System.out.println(notes.zoekTitel("TesSie"));
 
+        Assert.assertTrue("flauwekul", notes.zoekTitel("flauwekul") == 0);
         System.out.println(notes.zoekTitel("flauwekul"));
     }
 
+    @Test
     public void testReplace() {
         String tekst = "dit is 'een' test";
         System.out.println(tekst);

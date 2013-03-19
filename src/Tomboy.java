@@ -160,7 +160,7 @@ public class Tomboy {
                 }
             }
         } catch (Exception e) {
-            Tomboy2Everpad.log.severe(Thread.currentThread().getStackTrace()[1].getMethodName() + " file: " + file + ": "+e.getMessage());
+            Tomboy2Everpad.log.severe("file: " + file + ": "+e.getMessage());
         }
     }
 
@@ -173,7 +173,7 @@ public class Tomboy {
         String[] files = map.list(new FilenameFilter() {
             @Override
             public boolean accept(File map, String fileName) {
-                return Pattern.matches(".*\\.note", fileName.toLowerCase());
+            return Pattern.matches(".*\\.note", fileName.toLowerCase());
             }
         });
 

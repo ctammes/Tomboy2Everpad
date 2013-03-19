@@ -1,5 +1,7 @@
+import nl.ctammes.common.MijnLog;
+
 import javax.swing.*;
-import java.util.logging.FileHandler;
+import java.util.logging.Level;
 import java.util.logging.Logger;
 
 /**
@@ -11,15 +13,19 @@ import java.util.logging.Logger;
  */
 public class Tomboy2Everpad {
 
-    public static Logger log = null;
+    // initialiseer logger
+    public static Logger log = Logger.getLogger(Tomboy2Everpad.class.getName());
 
     public static void main(String[] args) {
+        String logDir = ".";
+        String logNaam = "Tomboy2Everpad.log";
+
         try {
-            FileHandler hand = new FileHandler("Tomboy2Everpad.log");
-            log = Logger.getLogger("log_file");
-            log.addHandler(hand);
+            MijnLog mijnlog = new MijnLog(logDir, logNaam, true);
+            log = mijnlog.getLog();
+            log.setLevel(Level.INFO);
         } catch (Exception e) {
-            System.out.println("logger: " + e.getMessage());
+            System.out.println(e.getMessage());
         }
 
         JFrame frame = new JFrame("TomboyView");

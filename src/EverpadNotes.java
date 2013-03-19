@@ -1,3 +1,5 @@
+import nl.ctammes.common.Sqlite;
+
 import java.sql.ResultSet;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
@@ -149,7 +151,7 @@ public class EverpadNotes {
         this.share_url = share_url;
     }
 
-    private Sqlite sqlite = null;
+    private nl.ctammes.common.Sqlite sqlite = null;
 
     public EverpadNotes(String dir, String db) {
         this.sqlite = new Sqlite(dir, db);
@@ -185,7 +187,7 @@ public class EverpadNotes {
                     " share_date, share_status, share_url)" +
                     " values (" + values + ")";
         Tomboy2Everpad.log.info("sql: " + sql);
-        sqlite.insert(sql);
+        sqlite.executeNoResult(sql);
         return false;
 
     }
@@ -205,7 +207,7 @@ public class EverpadNotes {
             long timestamp = parsedDate.getTime();
             return timestamp;
         } catch (ParseException e) {
-            System.out.println(Thread.currentThread().getStackTrace()[1].getMethodName() + e.getMessage());
+            Tomboy2Everpad.log.severe(e.getMessage());
             return 0;
         }
     }
@@ -232,12 +234,17 @@ public class EverpadNotes {
      */
     public Long zoekTitel(String titel) {
         String sql = String.format("select id from notes where lower(title) = '%s'",
-                titel.toLowerCase());
+            titel.toLowerCase());
+        Tomboy2Everpad.log.info("sql: " + sql);
         try {
             ResultSet rs = sqlite.execute(sql);
-            return rs.getLong("id");
+            if (rs.next()) {
+                return rs.getLong("id");
+            } else {
+                return 0L;
+            }
         } catch (Exception e) {
-            System.out.println(Thread.currentThread().getStackTrace()[1].getMethodName() + e.getMessage());
+            Tomboy2Everpad.log.severe(e.getMessage());
             return 0L;
         }
     }
