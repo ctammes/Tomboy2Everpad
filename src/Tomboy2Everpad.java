@@ -31,6 +31,7 @@ public class Tomboy2Everpad {
         JFrame frame = new JFrame("TomboyView");
         frame.setContentPane(new TomboyView().mainPanel);
         frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+        frame.setLocation(200,200);
         frame.pack();
         frame.setVisible(true);
     }

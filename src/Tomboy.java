@@ -23,7 +23,7 @@ public class Tomboy {
     private String tomboyDir = null;
 
     public Tomboy(String dir) {
-        this.tomboyDir = dir;
+        tomboyDir = dir;
     }
 
     private String filenaam = null;     // misschien gebruiken voor guid bij Everpad?
@@ -93,7 +93,7 @@ public class Tomboy {
      * @return
      */
     public void leesFile(String file) {
-        file = this.tomboyDir + "/" + file;
+        file = tomboyDir + "/" + file;
 
         String text = null;
         ByteArrayInputStream text1 = null;
@@ -187,9 +187,9 @@ public class Tomboy {
      * @return
      */
     private String vertaal(String tekst) {
-        tekst = tekst.replaceAll(" (?= )|(?<= ) ","&nbsp;");    // vervang aaneengesloten spaties
+        tekst = tekst.replaceAll(" (?= )|(?<= ) ","&nbsp;");        // vervang aleen aaneengesloten spaties
         tekst = tekst.replace("\"", "&quot;");
-        tekst = tekst.replace("\t", "&nbsp;&nbsp;&nbsp;&nbsp;");
+        tekst = tekst.replace("\t", "&nbsp;&nbsp;&nbsp;&nbsp;");    // tab wordt 4 spaties
         tekst = tekst.replace("bold>", "b>");
         tekst = tekst.replace("italic>", "i>");
         tekst = tekst.replace("strikethrough>", "del>");

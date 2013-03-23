@@ -12,7 +12,7 @@ import java.util.Date;
  * Time: 17:16
  * To change this template use File | Settings | File Templates.
  */
-public class EverpadNotes {
+public class EverpadNotes extends Sqlite {
 
     private Long id;
     private String guid;
@@ -151,21 +151,19 @@ public class EverpadNotes {
         this.share_url = share_url;
     }
 
-    private nl.ctammes.common.Sqlite sqlite = null;
-
     public EverpadNotes(String dir, String db) {
-        this.sqlite = new Sqlite(dir, db);
-        sqlite.openDb();
+        super(dir, db);
+        openDb();
     }
 
     public void sluitDb() {
-        sqlite.sluitDb();
+        sluitDb();
     }
 
     public ResultSet leesNote(Long id) {
         String sql = "select * from notes" +
                     " where id = " + Long.toString(id);
-        return sqlite.execute(sql);
+        return execute(sql);
     }
 
     public boolean schrijfNote(Tomboy note) {
@@ -187,7 +185,7 @@ public class EverpadNotes {
                     " share_date, share_status, share_url)" +
                     " values (" + values + ")";
         Tomboy2Everpad.log.fine("sql: " + sql);
-        sqlite.executeNoResult(sql);
+        executeNoResult(sql);
         return false;
 
     }
@@ -255,7 +253,7 @@ public class EverpadNotes {
             titel.toLowerCase());
         Tomboy2Everpad.log.fine("sql: " + sql);
         try {
-            ResultSet rs = sqlite.execute(sql);
+            ResultSet rs = execute(sql);
             if (rs.next()) {
                 return rs.getLong("id");
             } else {
