@@ -34,20 +34,25 @@
             </constraints>
             <properties>
               <text value="Lees files"/>
+              <toolTipText value="Lees Tomboy notities"/>
             </properties>
           </component>
           <component id="48e25" class="javax.swing.JComboBox" binding="cmbTomboyFiles">
             <constraints>
               <grid row="1" column="0" row-span="1" col-span="1" vsize-policy="0" hsize-policy="2" anchor="8" fill="1" indent="0" use-parent-layout="false"/>
             </constraints>
-            <properties/>
+            <properties>
+              <toolTipText value="Tomboy notitie"/>
+            </properties>
           </component>
           <component id="68726" class="javax.swing.JButton" binding="btnVerwerkTomboy">
             <constraints>
               <grid row="1" column="1" row-span="1" col-span="1" vsize-policy="0" hsize-policy="3" anchor="0" fill="1" indent="0" use-parent-layout="false"/>
             </constraints>
             <properties>
+              <enabled value="false"/>
               <text value="Verwerk"/>
+              <toolTipText value="Verwerk alle notities"/>
             </properties>
           </component>
           <scrollpane id="831a1">
@@ -62,6 +67,7 @@
                 <properties>
                   <lineWrap value="true"/>
                   <rows value="10"/>
+                  <toolTipText value="Inhoud na conversie"/>
                 </properties>
               </component>
             </children>
@@ -82,7 +88,9 @@
                 <preferred-size width="150" height="-1"/>
               </grid>
             </constraints>
-            <properties/>
+            <properties>
+              <toolTipText value="Notitie titel"/>
+            </properties>
           </component>
           <component id="7f91b" class="javax.swing.JTextField" binding="txtEverpadDb">
             <constraints>
@@ -90,7 +98,9 @@
                 <preferred-size width="150" height="-1"/>
               </grid>
             </constraints>
-            <properties/>
+            <properties>
+              <toolTipText value="Everpad database"/>
+            </properties>
           </component>
           <component id="c25ac" class="javax.swing.JTextField" binding="txtEverpadDir">
             <constraints>
@@ -98,7 +108,9 @@
                 <preferred-size width="150" height="-1"/>
               </grid>
             </constraints>
-            <properties/>
+            <properties>
+              <toolTipText value="Everpad directory"/>
+            </properties>
           </component>
           <component id="8abc3" class="javax.swing.JLabel">
             <constraints>
@@ -129,7 +141,8 @@
                   <contentType value="text/html"/>
                   <editable value="false"/>
                   <font name="DejaVu Sans Mono" size="11"/>
-                  <text value="&lt;html&gt;&#10;  &lt;head&gt;&#10;&#10;  &lt;/head&gt;&#10;  &lt;body&gt;&#10;    &lt;p style=&quot;margin-top: 0&quot;&gt;&#10;      &#10;    &lt;/p&gt;&#10;  &lt;/body&gt;&#10;&lt;/html&gt;&#10;"/>
+                  <text value="&lt;html&gt;&#10;  &lt;head&gt;&#10;    &#10;  &lt;/head&gt;&#10;  &lt;body&gt;&#10;  &lt;/body&gt;&#10;&lt;/html&gt;&#10;"/>
+                  <toolTipText value="Notitie tekst in html"/>
                 </properties>
                 <clientProperties>
                   <charset class="java.lang.String" value=""/>
@@ -151,6 +164,7 @@
                 </constraints>
                 <properties>
                   <text value="OpenDb"/>
+                  <toolTipText value="Open Everpad database"/>
                 </properties>
               </component>
             </children>
@@ -161,6 +175,7 @@
             </constraints>
             <properties>
               <text value="..."/>
+              <toolTipText value="Zoek directory"/>
             </properties>
           </component>
         </children>
@@ -179,6 +194,7 @@
             </constraints>
             <properties>
               <text value="Opslaan"/>
+              <toolTipText value="Opslaan in Everpad database"/>
             </properties>
           </component>
           <hspacer id="e965b">

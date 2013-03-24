@@ -1,4 +1,5 @@
 import junit.framework.Assert;
+import nl.ctammes.common.Diversen;
 import nl.ctammes.common.MijnLog;
 import org.junit.BeforeClass;
 import org.junit.Test;
@@ -38,7 +39,7 @@ import java.util.regex.Pattern;
  */
 public class Tomboy2EverpadTest {
 
-    private static String dir = null;
+    private static String tomboyDir = null;
     private static String everpadDir = null;
     private static String everpadDb = null;
 
@@ -48,7 +49,7 @@ public class Tomboy2EverpadTest {
 
     @BeforeClass
     public static void setUp() throws Exception {
-        dir = "/home/chris/.local/share/tomboy";
+        tomboyDir = "/home/chris/.local/share/tomboy";
         everpadDir = "/home/chris/IdeaProjects/java/Tomboy2Everpad";
         everpadDb = "everpad.5.db";
 
@@ -67,7 +68,7 @@ public class Tomboy2EverpadTest {
     // lees tomboy notitie
     @Test
     public void testLeesTomboyTekst() {
-        File file = new File(this.dir + "/abeec28c-1003-4239-9b6f-c4d70ac3b673.note");
+        File file = new File(this.tomboyDir + "/abeec28c-1003-4239-9b6f-c4d70ac3b673.note");
         try {
             BufferedReader reader = new BufferedReader(new FileReader(file));
             StringBuilder tekst = new StringBuilder();
@@ -87,8 +88,8 @@ public class Tomboy2EverpadTest {
     // testen van inlezen xml
     @Test
     public void testLeesTomboyXml() {
-//        String tomboyFile = this.dir + "/abeec28c-1003-4239-9b6f-c4d70ac3b673 (kopie).note";
-        String tomboyFile = this.dir + "/abeec28c-1003-4239-9b6f-c4d70ac3b673.note";
+//        String tomboyFile = this.tomboyDir + "/abeec28c-1003-4239-9b6f-c4d70ac3b673 (kopie).note";
+        String tomboyFile = this.tomboyDir + "/abeec28c-1003-4239-9b6f-c4d70ac3b673.note";
 
         String text = null;
         try{
@@ -165,7 +166,7 @@ public class Tomboy2EverpadTest {
      */
     @Test
     public void testXmlFunctie() {
-        String tomboyFile = this.dir + "/abeec28c-1003-4239-9b6f-c4d70ac3b673.note";
+        String tomboyFile = this.tomboyDir + "/abeec28c-1003-4239-9b6f-c4d70ac3b673.note";
 
         String text = null;
         ByteArrayInputStream text1 = null;
@@ -343,7 +344,7 @@ public class Tomboy2EverpadTest {
     // testen van de functie
     @Test
     public void testLeesTomboyNote() {
-        Tomboy tomboy = new Tomboy(this.dir);
+        Tomboy tomboy = new Tomboy(this.tomboyDir);
 
         String tomboyFile = "/dab786f7-6c22-4249-9c8e-4fd72f3bf42f.note";
         tomboy.leesFile(tomboyFile);
@@ -424,8 +425,8 @@ public class Tomboy2EverpadTest {
 
     @Test
     public void testLeesTomboyFilenamen() {
-        Tomboy tomboy = new Tomboy(this.dir);
-        String[] files = tomboy.leesAlleFilenamen();
+        Tomboy tomboy = new Tomboy(tomboyDir);
+        String[] files = Diversen.leesFileNamen(tomboyDir, Tomboy.TOMBOYMASK);
         System.out.println(files.length + " files gevonden:");
         Assert.assertTrue("aantal files", files.length == 145);
         for (String file: files) {
@@ -451,8 +452,35 @@ public class Tomboy2EverpadTest {
         tekst = tekst.replace("'", "''");
         System.out.println(tekst);
         log.info(tekst);
+
         tekst = tekst.replaceAll("'", "''");
         System.out.println(tekst);
         log.info(tekst);
+
+        tekst = "list-item dir=&quot;ltr&quot;>";
+        tekst = tekst.replaceAll("list-item.*>", "li>");
+        System.out.println(tekst);
+        log.info(tekst);
+
+        tekst = "<link:url>http://www.google.nl</link:url>";
+        tekst = tekst.replaceAll("<link:url>(.*)</link:url>", "<a href=\"$1\">$1</a>");
+        System.out.println(tekst);
+        log.info(tekst);
+
+        tekst = "<link:internal>andere notitie</link:internal>";
+        tekst = tekst.replaceAll("<link:internal>(.*)</link:internal>", "<a>$1</a>");
+        System.out.println(tekst);
+        log.info(tekst);
+
+        tekst = "tag test notitie<br />" +
+                "<br /><br /><br />" +
+                "<bold>vetgedrukt</bold><br />" +
+                "<italic>cursief</italic><br />" +
+                "<strikethrough>doorhalen";
+        tekst = tekst.replaceFirst("tag test notitie\\s*(<br />)*", "");
+        System.out.println(tekst);
+        log.info(tekst);
+
+
     }
 }

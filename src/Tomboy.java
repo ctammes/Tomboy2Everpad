@@ -7,9 +7,7 @@ import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
 import java.io.ByteArrayInputStream;
 import java.io.File;
-import java.io.FilenameFilter;
 import java.util.Scanner;
-import java.util.regex.Pattern;
 
 /**
  * Created with IntelliJ IDEA.
@@ -21,6 +19,8 @@ import java.util.regex.Pattern;
 
 public class Tomboy {
     private String tomboyDir = null;
+
+    public static final String TOMBOYMASK = ".*\\.note";
 
     public Tomboy(String dir) {
         tomboyDir = dir;
@@ -133,9 +133,11 @@ public class Tomboy {
                     for (String elem: elems) {
                         String tekst = eElement.getElementsByTagName(elem).item(0).getTextContent();
                         if (elem == "title") {
+                            tekst = tekst.replace("'", "''");
                             title = tekst;
                         } else if (elem == "note-content") {
                             tekst = vertaal(tekst);
+                            tekst = tekst.replaceFirst(title + "\\s*(<br />)*", "");     // titel uit de tekst halen
                             note_content = tekst;
                         } else if (elem == "create-date") {
                             create_date = tekst;
@@ -165,23 +167,6 @@ public class Tomboy {
     }
 
     /**
-     * Lees alle filenamen uit de Tomboy directory
-     * @return
-     */
-    public String[] leesAlleFilenamen() {
-        File map = new File(this.tomboyDir);
-        String[] files = map.list(new FilenameFilter() {
-            @Override
-            public boolean accept(File map, String fileName) {
-            return Pattern.matches(".*\\.note", fileName.toLowerCase());
-            }
-        });
-
-        return files;
-
-    }
-
-    /**
      * Vertaal Tomboy tags naar standaard HTML
      * @param tekst
      * @return
@@ -189,13 +174,22 @@ public class Tomboy {
     private String vertaal(String tekst) {
         tekst = tekst.replaceAll(" (?= )|(?<= ) ","&nbsp;");        // vervang aleen aaneengesloten spaties
         tekst = tekst.replace("\"", "&quot;");
+        tekst = tekst.replace("'", "''");
         tekst = tekst.replace("\t", "&nbsp;&nbsp;&nbsp;&nbsp;");    // tab wordt 4 spaties
         tekst = tekst.replace("bold>", "b>");
         tekst = tekst.replace("italic>", "i>");
+        tekst = tekst.replace("size:small>", "small>");
+        tekst = tekst.replace("size:large>", "big>");
+        tekst = tekst.replace("size:huge>", "big>");
         tekst = tekst.replace("strikethrough>", "del>");
+        tekst = tekst.replace("highlight>", "mark>");
         tekst = tekst.replace("monospace>", "tt>");
         tekst = tekst.replace("list>", "ul>");
-        tekst = tekst.replace("list-item>", "li>");
+        tekst = tekst.replaceAll("<link:url>(.*)</link:url>", "<a href=\"$1\">$1</a>");;
+        // TODO niet ondersteund door EverPad??
+        tekst = tekst.replaceAll("<link:internal>(.*)</link:internal>", "<a>$1</a>");;
+        tekst = tekst.replace("link:internal>", "ul>");
+        tekst = tekst.replaceAll("list-item[^>]*>", "li>");
         tekst = tekst.replace("\n", "<br />");
 
         return tekst;

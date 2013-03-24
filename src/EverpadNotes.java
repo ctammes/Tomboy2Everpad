@@ -157,7 +157,7 @@ public class EverpadNotes extends Sqlite {
     }
 
     public void sluitDb() {
-        sluitDb();
+        super.sluitDb();
     }
 
     public ResultSet leesNote(Long id) {
