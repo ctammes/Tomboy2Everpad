@@ -185,9 +185,9 @@ public class Tomboy {
         tekst = tekst.replace("highlight>", "mark>");
         tekst = tekst.replace("monospace>", "tt>");
         tekst = tekst.replace("list>", "ul>");
-        tekst = tekst.replaceAll("<link:url>(.*)</link:url>", "<a href=\"$1\">$1</a>");;
+        tekst = tekst.replaceAll("<link:url>([^>]*)</link:url>", "<a href=\"$1\">$1</a>");;
         // TODO niet ondersteund door EverPad??
-        tekst = tekst.replaceAll("<link:internal>(.*)</link:internal>", "<a>$1</a>");;
+        tekst = tekst.replaceAll("<link:internal>([^>]*)</link:internal>", "<a>$1</a>");;
         tekst = tekst.replace("link:internal>", "ul>");
         tekst = tekst.replaceAll("list-item[^>]*>", "li>");
         tekst = tekst.replace("\n", "<br />");
